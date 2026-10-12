@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: blob:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'">
+<title>SVG 查看器</title>
+<style>
+:root{color-scheme:dark;--bg:#16181d;--panel:#20232b;--line:#343843;--text:#edf0f6;--muted:#9ba3b4;--accent:#b0c5ff}
+*{box-sizing:border-box}body{margin:0;font:14px "Segoe UI","Microsoft YaHei UI",sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;user-select:none}
+button{font:inherit;color:inherit;border:1px solid transparent;background:transparent;border-radius:7px;padding:8px 12px;cursor:pointer;white-space:nowrap}button:hover{background:#333947}button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.3;cursor:default;background:none}.primary{background:#b0c5ff;color:#142347;font-weight:600}.primary:hover{background:#c5d4ff}.secondary{border-color:#444c5d;background:#282e3a}
+header{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--line);background:var(--panel);flex-shrink:0}.brand{display:flex;align-items:center;gap:10px;min-width:148px;font-size:16px;font-weight:600;letter-spacing:.3px}.mark{display:grid;place-items:center;color:#c3d3ff;border:1px solid #6a7da9;background:#2a354d;width:33px;height:33px;border-radius:10px;font-size:12px}.file{flex:1;min-width:0;line-height:1.7}.name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.folder{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;text-align:left}
+.tools{display:flex;align-items:center;gap:5px;padding:9px 20px;border-bottom:1px solid var(--line);background:#1b1e25;flex-shrink:0}.separator{height:22px;width:1px;background:var(--line);margin:0 8px}.spacer{flex:1}.zoom{min-width:64px;font-variant-numeric:tabular-nums;text-align:center;color:var(--accent);font-size:13px}.icon{min-width:34px;font-size:18px;padding:4px 10px}.backgrounds{display:flex;gap:5px;align-items:center}.swatch{padding:0;width:24px;height:24px;border:2px solid #576070;border-radius:50%;margin:0 2px}.swatch[aria-pressed=true]{outline:2px solid #b0c5ff;outline-offset:2px}.swatch[data-bg=checker]{background:conic-gradient(#e2e5eb 25%,#fff 0 50%,#e2e5eb 0 75%,#fff 0) 0 0/10px 10px}.swatch[data-bg=white]{background:#fff}.swatch[data-bg=dark]{background:#252830}
+#viewport{flex:1;position:relative;overflow:hidden;touch-action:none;outline:none;background:#252830;cursor:default}#viewport[data-bg=white]{background:#fff}#viewport[data-bg=checker]{background:conic-gradient(#e2e5eb 25%,#fff 0 50%,#e2e5eb 0 75%,#fff 0) 0 0/24px 24px}#viewport.loaded{cursor:grab}#viewport.dragging{cursor:grabbing}#viewport.drop{box-shadow:inset 0 0 0 3px #91b0ff}#picture{position:absolute;top:0;left:0;transform-origin:0 0;pointer-events:none;max-width:none;display:none}#viewport.loaded #picture{display:block}
+#empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--bg);color:var(--muted)}#viewport.loaded #empty{display:none}.empty-mark{height:76px;width:76px;display:grid;place-items:center;border:1px solid #526384;border-radius:23px;background:linear-gradient(145deg,#303c56,#202632);font-size:23px;color:#c7d5ff;margin-bottom:24px;letter-spacing:1px}h1{color:var(--text);font-size:23px;font-weight:500;margin:0 0 12px}#empty p{margin:0 0 25px;line-height:1.8}.hint{margin-top:32px;font-size:12px;line-height:2;color:#8791a5}kbd{font:12px "Segoe UI",sans-serif;border:1px solid #465064;background:#262c38;padding:2px 6px;border-radius:4px;color:#c5cddb}
+.edge{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:60px;padding:0;background:#161b26d9;border:1px solid #495268;border-radius:9px;font-size:26px;color:#e7edff;opacity:0;transition:opacity .15s}#viewport.loaded:hover .edge,#viewport.loaded .edge:focus-visible{opacity:1}.edge:disabled{visibility:hidden}#previousEdge{left:16px}#nextEdge{right:16px}
+footer{height:34px;padding:0 20px;display:flex;align-items:center;gap:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);background:var(--panel);flex-shrink:0}#counter{color:#d8e3ff;font-variant-numeric:tabular-nums}#dimensions{font-variant-numeric:tabular-nums}.footer-tip{margin-left:auto}
+#toast{position:fixed;bottom:55px;left:50%;transform:translateX(-50%);background:#303b50;color:#f3f5fb;box-shadow:0 4px 25px #0005;border:1px solid #6a7d9d;border-radius:9px;padding:13px 18px;max-width:85vw;z-index:5;line-height:1.7;display:none;user-select:text}#toast.error{background:#472c34;border-color:#a45f70}
+dialog{color:var(--text);background:#222731;border:1px solid #49536a;border-radius:14px;max-width:520px;width:90vw;padding:25px 28px;box-shadow:0 20px 80px #0009}dialog::backdrop{background:#0008}dialog h2{font-size:19px;margin:0 0 18px}dialog p{color:#b2bbcc;line-height:1.8;font-size:13px}dl{display:grid;grid-template-columns:1fr auto;gap:13px 22px;font-size:13px}dt{color:#bdc5d4}dd{margin:0;text-align:right}.dialog-actions{display:flex;justify-content:flex-end;margin-top:22px;gap:8px}
+@media(max-width:850px){header{gap:9px;padding:10px 14px}.brand{min-width:auto}.brand-label{display:none}.tools{padding:8px 12px;gap:2px}.tools button{padding-left:8px;padding-right:8px}.separator{margin:0 5px}.footer-tip{display:none}}
+@media(max-width:650px){.tools{flex-wrap:wrap;row-gap:8px}.tools .spacer{flex-basis:100%;height:0}.backgrounds{margin-left:auto}.tools>.separator:last-of-type{display:none}header{gap:8px}.tools button{padding-left:6px;padding-right:6px}.zoom{min-width:56px}footer{gap:10px;padding:0 12px}}
+@media(max-width:420px){.tools>.separator:first-of-type{display:none}.tools{padding-left:6px;padding-right:6px}.icon{min-width:26px}.zoom{min-width:48px}.tools button{font-size:12px}.tools .icon{font-size:18px}header{padding-left:10px;padding-right:10px}.mark{width:28px;height:28px}.name{font-size:12px}.folder{font-size:10px}}
+/* Keep more vertical space for the image, especially on high-DPI displays. */
+header{padding-top:7px;padding-bottom:7px}.tools{padding-top:5px;padding-bottom:5px}footer{height:28px}
+</style>
+</head>
+<body>
+<header><div class="brand"><span class="mark">SVG</span><span class="brand-label">SVG 查看器</span></div><div class="file"><div class="name" id="name">轻松查看每一个细节</div><div class="folder" id="path">本地文件 · 矢量渲染</div></div><button class="primary" id="open" title="打开图片 (Ctrl+O)">打开图片</button><button id="help" title="快捷键和使用说明">帮助</button></header>
+<nav class="tools" aria-label="图片工具栏">
+<button class="icon" id="previous" title="上一张 (←)" aria-label="上一张" disabled>‹</button><button class="icon" id="next" title="下一张 (→)" aria-label="下一张" disabled>›</button>
+<span class="separator"></span><button class="icon image-tool" id="zoomOut" title="缩小 (-)" aria-label="缩小" disabled>−</button><span class="zoom" id="zoom">—</span><button class="icon image-tool" id="zoomIn" title="放大 (+)" aria-label="放大" disabled>+</button><button class="image-tool" id="fit" title="适应窗口 (0 / 双击)" disabled>适应窗口</button><button class="image-tool" id="actual" title="原始大小 (1)" disabled>1:1</button>
+<span class="spacer"></span><div class="backgrounds" aria-label="画布背景"><button class="swatch" data-bg="checker" aria-label="透明棋盘背景" aria-pressed="false" title="透明棋盘背景"></button><button class="swatch" data-bg="white" aria-label="白色背景" aria-pressed="false" title="白色背景"></button><button class="swatch" data-bg="dark" aria-label="深色背景" aria-pressed="true" title="深色背景"></button></div><span class="separator"></span><button id="fullscreen" title="全屏 (F11)">全屏</button>
+</nav>
+<main id="viewport" tabindex="0" data-bg="dark" aria-label="SVG 图片画布">
+<img id="picture" alt="" draggable="false">
+<div id="empty"><div class="empty-mark">SVG</div><h1>把矢量图片，轻松打开</h1><p>拖入一张 SVG 图片，或从文件夹中选择。<br>放大细节，顺手浏览同文件夹里的每一张。</p><button class="primary" id="openEmpty">选择 SVG 图片</button><div class="hint"><kbd>滚轮</kbd> 缩放 &nbsp; · &nbsp; <kbd>拖动</kbd> 平移 &nbsp; · &nbsp; <kbd>←</kbd> <kbd>→</kbd> 切换图片</div></div>
+<button class="edge" id="previousEdge" title="上一张" aria-label="上一张" disabled>‹</button><button class="edge" id="nextEdge" title="下一张" aria-label="下一张" disabled>›</button>
+</main>
+<footer><span id="counter">尚未打开图片</span><span id="dimensions"></span><button id="reveal" style="font-size:11px;padding:2px 5px" disabled title="在资源管理器中选中当前图片">在文件夹中显示</button><span class="footer-tip">滚轮缩放 · 拖动平移 · ← → 切图 · 双击适应窗口</span></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="helpDialog"><h2>顺手的 SVG 查看器</h2><dl><dt>打开文件</dt><dd><kbd>Ctrl</kbd> + <kbd>O</kbd> / 拖入文件</dd><dt>放大 / 缩小</dt><dd>鼠标滚轮 / <kbd>+</kbd> <kbd>−</kbd></dd><dt>移动图片</dt><dd>按住鼠标左键拖动</dd><dt>上一张 / 下一张</dt><dd><kbd>←</kbd> <kbd>→</kbd></dd><dt>适应窗口 / 原始大小</dt><dd><kbd>0</kbd> / <kbd>1</kbd></dd><dt>重新读取文件</dt><dd><kbd>R</kbd></dd><dt>全屏 / 退出全屏</dt><dd><kbd>F11</kbd> / <kbd>Esc</kbd></dd></dl><p>图片按文件名自然排序，例如 2.svg 在 10.svg 前。背景色可用右上角圆点切换。切换图片后自动适应窗口。</p><p>设为默认前，请把整个程序文件夹放在固定位置。点击下方按钮后，在 Windows 默认应用中搜索 .svg 并选择“SVG 查看器”。</p><div class="dialog-actions"><button class="secondary" id="associate">设为 SVG 默认应用</button><button class="primary" id="closeHelp">知道了</button></div></dialog>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const viewport=$('viewport'),picture=$('picture');
+const state={loaded:false,width:0,height:0,scale:1,x:0,y:0,fit:true,index:0,total:0};
+let loadId=0,drag=null,toastTimer;
+const send=action=>window.chrome?.webview?.postMessage({action});
+function notice(message,error=false){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').classList.toggle('error',error);$('toast').style.display='block';toastTimer=setTimeout(()=>$('toast').style.display='none',error?10000:12000)}
+function render(){picture.style.transform=`translate(${state.x}px,${state.y}px) scale(${state.scale})`;$('zoom').textContent=state.loaded?(state.scale*100).toLocaleString('zh-CN',{maximumFractionDigits:1})+'%':'—'}
+function center(){state.x=(viewport.clientWidth-state.width*state.scale)/2;state.y=(viewport.clientHeight-state.height*state.scale)/2;render()}
+function fit(){if(!state.loaded)return;state.fit=true;const padding=Math.min(80,Math.max(16,Math.min(viewport.clientWidth,viewport.clientHeight)*.08));state.scale=Math.min((viewport.clientWidth-padding)/state.width,(viewport.clientHeight-padding)/state.height);state.scale=Math.max(.00001,Math.min(128,state.scale));center()}
+function actual(){if(!state.loaded)return;state.fit=false;state.scale=1;center()}
+function zoomAt(factor,x=viewport.clientWidth/2,y=viewport.clientHeight/2){if(!state.loaded)return;state.fit=false;let next=Math.max(.00001,Math.min(128,state.scale*factor)),ratio=next/state.scale;state.x=x-(x-state.x)*ratio;state.y=y-(y-state.y)*ratio;state.scale=next;render()}
+function buttons(){document.querySelectorAll('.image-tool').forEach(b=>b.disabled=!state.loaded);$('reveal').disabled=!state.loaded;for(const id of ['previous','previousEdge'])$(id).disabled=state.index<=1;for(const id of ['next','nextEdge'])$(id).disabled=state.index>=state.total}
+function loadImage(message){
+ const id=++loadId,candidate=new Image();
+ candidate.onload=()=>{
+  if(id!==loadId)return;
+  state.loaded=true;state.width=candidate.naturalWidth;state.height=candidate.naturalHeight;state.index=message.index;state.total=message.total;
+  picture.src=candidate.src;picture.alt=message.name;picture.style.width=state.width+'px';picture.style.height=state.height+'px';
+  viewport.classList.add('loaded');$('name').textContent=message.name;$('name').title=message.name;$('path').textContent=message.path;$('path').title=message.path;
+  $('counter').textContent=`${message.index} / ${message.total} 张`;$('dimensions').textContent=`${state.width} × ${state.height}`;buttons();fit();viewport.focus({preventScroll:true});
+ };
+ candidate.onerror=()=>{if(id===loadId)notice('图片无法渲染。请检查 SVG 文件内容是否完整。',true)};
+ candidate.src='data:image/svg+xml;base64,'+message.data;
+}
+function receive(message){if(message.type==='image')loadImage(message);else if(message.type==='error'||message.type==='notice')notice(message.message,message.type==='error');else if(message.type==='fullscreen')$('fullscreen').textContent=message.value?'退出全屏':'全屏'}
+window.chrome?.webview?.addEventListener('message',event=>receive(event.data));
+$('open').onclick=$('openEmpty').onclick=()=>send('open');
+for(const id of ['previous','previousEdge'])$(id).onclick=()=>send('previous');
+for(const id of ['next','nextEdge'])$(id).onclick=()=>send('next');
+$('zoomIn').onclick=()=>zoomAt(1.2);$('zoomOut').onclick=()=>zoomAt(1/1.2);$('fit').onclick=fit;$('actual').onclick=actual;
+$('fullscreen').onclick=()=>send('fullscreen');$('reveal').onclick=()=>send('reveal');
+$('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('helpDialog').close();$('associate').onclick=()=>send('associate');
+function setBackground(value){viewport.dataset.bg=value;document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===value)));try{localStorage.setItem('background',value)}catch{}}
+document.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>setBackground(b.dataset.bg));
+try{const saved=localStorage.getItem('background');if(['checker','white','dark'].includes(saved))setBackground(saved)}catch{}
+viewport.addEventListener('wheel',e=>{e.preventDefault();const rect=viewport.getBoundingClientRect();zoomAt(Math.exp(-Math.max(-100,Math.min(100,e.deltaY))*.002),e.clientX-rect.left,e.clientY-rect.top)},{passive:false});
+viewport.addEventListener('pointerdown',e=>{if(!state.loaded||e.button!==0||e.target.closest('button'))return;state.fit=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,ox:state.x,oy:state.y};viewport.setPointerCapture(e.pointerId);viewport.classList.add('dragging')});
+viewport.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;state.x=drag.ox+e.clientX-drag.x;state.y=drag.oy+e.clientY-drag.y;render()});
+function endDrag(e){if(drag&&drag.id===e.pointerId){drag=null;viewport.classList.remove('dragging');if(viewport.hasPointerCapture(e.pointerId))viewport.releasePointerCapture(e.pointerId)}}
+viewport.addEventListener('pointerup',endDrag);viewport.addEventListener('pointercancel',endDrag);viewport.addEventListener('lostpointercapture',()=>{drag=null;viewport.classList.remove('dragging')});
+viewport.addEventListener('dblclick',e=>{if(!e.target.closest('button'))fit()});
+new ResizeObserver(()=>{if(state.loaded){if(state.fit)fit();else center()}}).observe(viewport);
+document.addEventListener('keydown',e=>{
+ if($('helpDialog').open)return;
+ if(e.ctrlKey&&e.key.toLowerCase()==='o'){e.preventDefault();send('open');return}
+ if(e.key==='F11'){e.preventDefault();send('fullscreen');return}if(e.key==='Escape'){send('exitFullscreen');return}
+ if(e.ctrlKey||e.altKey||e.metaKey)return;
+ const actions={'ArrowLeft':()=>send('previous'),'ArrowRight':()=>send('next'),'+':()=>zoomAt(1.2),'=':()=>zoomAt(1.2),'-':()=>zoomAt(1/1.2),'0':fit,'1':actual,'r':()=>send('reload'),'R':()=>send('reload')};
+ if(actions[e.key]){e.preventDefault();actions[e.key]()}
+});
+document.addEventListener('dragover',e=>{e.preventDefault();viewport.classList.add('drop');if(e.dataTransfer)e.dataTransfer.dropEffect='copy'});
+document.addEventListener('dragleave',e=>{if(!e.relatedTarget)viewport.classList.remove('drop')});
+document.addEventListener('drop',e=>{e.preventDefault();viewport.classList.remove('drop');const files=Array.from(e.dataTransfer?.files||[]);const file=files.find(f=>/\.svg$/i.test(f.name));if(!file){notice('请拖入 .svg 图片文件。',true);return}if(window.chrome?.webview?.postMessageWithAdditionalObjects)window.chrome.webview.postMessageWithAdditionalObjects({action:'drop'},[file]);else notice('当前 WebView2 版本不支持拖入，请使用“打开图片”。',true)});
+send('ready');
+</script>
+</body></html>

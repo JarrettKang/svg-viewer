@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+ <defs><linearGradient id="g"><stop stop-color="#a8bfff"/><stop offset="1" stop-color="#77e3ce"/></linearGradient></defs>
+ <g fill="none" stroke="url(#g)" stroke-width="28"><circle cx="310" cy="270" r="140"/><circle cx="490" cy="270" r="140"/></g>
+ <circle cx="400" cy="270" r="65" fill="#ffcb91" fill-opacity=".75"/>
+ <text x="400" y="490" text-anchor="middle" font-family="Microsoft YaHei,sans-serif" font-size="28" fill="#819bd2">透明背景 · 无限细节</text>
+</svg>

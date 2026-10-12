@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+ <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#abbbe3" stroke-width=".4"/></pattern></defs>
+ <rect width="1200" height="800" fill="#f7f9ff"/><rect width="1200" height="800" fill="url(#grid)"/>
+ <g fill="none" stroke="#6685ca"><circle cx="600" cy="400" r="250" stroke-width="2"/><circle cx="600" cy="400" r="200" stroke-width="1"/><circle cx="600" cy="400" r="150" stroke-width=".5"/><circle cx="600" cy="400" r="100" stroke-width=".25"/><path d="M300 400H900M600 100V700" stroke-width=".5"/></g>
+ <text x="600" y="400" text-anchor="middle" font-size="12" fill="#34538e" font-family="Microsoft YaHei,sans-serif">放大看看这行小字，线条依然清晰</text>
+ <text x="45" y="55" font-size="25" fill="#34538e" font-family="Microsoft YaHei,sans-serif">细节测试 / VECTOR DETAIL</text>
+</svg>

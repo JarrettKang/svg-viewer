@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#152c53"/><stop offset="1" stop-color="#547ca2"/></linearGradient>
+    <linearGradient id="sun" x2="0" y2="1"><stop stop-color="#ffe2a9"/><stop offset="1" stop-color="#f4a877"/></linearGradient>
+    <linearGradient id="lake" x2="0" y2="1"><stop stop-color="#4b8d9b"/><stop offset="1" stop-color="#16334d"/></linearGradient>
+  </defs>
+  <rect width="1000" height="640" rx="24" fill="url(#sky)"/>
+  <circle cx="730" cy="185" r="74" fill="url(#sun)"/>
+  <g fill="#fff" opacity=".6"><circle cx="120" cy="110" r="2"/><circle cx="280" cy="80" r="2"/><circle cx="470" cy="120" r="2"/><circle cx="860" cy="65" r="2"/></g>
+  <path d="M0 360 200 155 415 360 590 185 840 400 1000 270V640H0" fill="#7599b0"/>
+  <path d="m200 155-55 88 58-24 38 25zM590 185l-68 104 70-33 54 24z" fill="#e1e6e3"/>
+  <path d="M0 425 180 320 380 427 670 319 1000 430V640H0" fill="#315b70"/>
+  <path d="M0 425Q250 395 500 430T1000 425V640H0" fill="url(#lake)"/>
+  <g stroke="#9ec5c6" stroke-width="3" opacity=".4"><path d="M470 470h180M530 495h220M390 520h220M600 550h200"/></g>
+  <path d="M0 550Q140 490 290 560T600 640H0" fill="#132c3d"/>
+  <g fill="#132c3d"><path d="m90 330-50 155h100z"/><path d="m90 390-65 140h130z"/><rect x="84" y="470" width="12" height="100"/><path d="m180 390-40 130h80z"/><rect x="175" y="490" width="10" height="70"/></g>
+  <text x="45" y="65" font-family="Segoe UI,sans-serif" font-size="17" fill="#dfebf5" letter-spacing="4">A QUIET EVENING</text>
+  <text x="950" y="600" text-anchor="end" font-family="Microsoft YaHei,sans-serif" font-size="14" fill="#b1ccd9">滚轮放大 · 拖动查看 · → 下一张</text>
+</svg>
