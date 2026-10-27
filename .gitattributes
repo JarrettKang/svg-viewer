@@ -4,4 +4,5 @@
 *.md text eol=lf
 *.ps1 text eol=lf
 *.svg text eol=lf
+*.eps text eol=lf
 *.ico binary

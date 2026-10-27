@@ -8,3 +8,5 @@ This distribution includes Microsoft .NET 8 Windows Desktop Runtime and Microsof
 - WebView2 Runtime is installed separately and governed by Microsoft's terms: https://developer.microsoft.com/microsoft-edge/webview2/
 
 Runtime license and third-party notice files are retained in the release folder when supplied by the runtime package. Please consult the linked licenses for their full terms.
+
+Optional external dependency: EPS preview invokes a separately installed Ghostscript command-line executable. Ghostscript is not included in this distribution. Users obtain and install it separately under its own terms: https://ghostscript.com/releases/gsdnld.html

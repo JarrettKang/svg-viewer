@@ -7,6 +7,7 @@ $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
 dotnet publish src/SvgViewer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -o dist/SvgViewer
 if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 Copy-Item -LiteralPath README.md -Destination dist/SvgViewer/README.md -Force
+Copy-Item -LiteralPath CHANGELOG.md -Destination dist/SvgViewer/CHANGELOG.md -Force
 Copy-Item -LiteralPath LICENSE -Destination dist/SvgViewer/LICENSE -Force
 Copy-Item -LiteralPath THIRD-PARTY-NOTICES.md -Destination dist/SvgViewer/THIRD-PARTY-NOTICES.md -Force
 Copy-Item -LiteralPath samples -Destination dist/SvgViewer -Recurse -Force

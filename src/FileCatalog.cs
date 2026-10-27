@@ -7,8 +7,10 @@ internal static class FileCatalog
     [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
     private static extern int StrCmpLogicalW(string a, string b);
 
+    public static bool IsSupported(string path) => Path.GetExtension(path).ToLowerInvariant() is ".svg" or ".eps";
+
     public static List<string> Scan(string path) => Directory.EnumerateFiles(Path.GetDirectoryName(path)!)
-        .Where(p => string.Equals(Path.GetExtension(p), ".svg", StringComparison.OrdinalIgnoreCase))
+        .Where(IsSupported)
         .OrderBy(p => Path.GetFileName(p), Comparer<string>.Create(StrCmpLogicalW)).ToList();
 
     public static byte[] ReadSvg(string path)

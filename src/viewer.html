@@ -22,6 +22,7 @@ dialog{color:var(--text);background:#222731;border:1px solid #49536a;border-radi
 @media(max-width:420px){.tools>.separator:first-of-type{display:none}.tools{padding-left:6px;padding-right:6px}.icon{min-width:26px}.zoom{min-width:48px}.tools button{font-size:12px}.tools .icon{font-size:18px}header{padding-left:10px;padding-right:10px}.mark{width:28px;height:28px}.name{font-size:12px}.folder{font-size:10px}}
 /* Keep more vertical space for the image, especially on high-DPI displays. */
 header{padding-top:7px;padding-bottom:7px}.tools{padding-top:5px;padding-bottom:5px}footer{height:28px}
+.dialog-actions{flex-wrap:wrap}#gsStatus{overflow-wrap:anywhere}#loading{display:none;position:absolute;top:15px;left:50%;transform:translateX(-50%);background:#202b40ee;color:#e7edff;border:1px solid #657ba2;padding:10px 18px;border-radius:8px;pointer-events:none;z-index:2}
 </style>
 </head>
 <body>
@@ -31,14 +32,16 @@ header{padding-top:7px;padding-bottom:7px}.tools{padding-top:5px;padding-bottom:
 <span class="separator"></span><button class="icon image-tool" id="zoomOut" title="缩小 (-)" aria-label="缩小" disabled>−</button><span class="zoom" id="zoom">—</span><button class="icon image-tool" id="zoomIn" title="放大 (+)" aria-label="放大" disabled>+</button><button class="image-tool" id="fit" title="适应窗口 (0 / 双击)" disabled>适应窗口</button><button class="image-tool" id="actual" title="原始大小 (1)" disabled>1:1</button>
 <span class="spacer"></span><div class="backgrounds" aria-label="画布背景"><button class="swatch" data-bg="checker" aria-label="透明棋盘背景" aria-pressed="false" title="透明棋盘背景"></button><button class="swatch" data-bg="white" aria-label="白色背景" aria-pressed="false" title="白色背景"></button><button class="swatch" data-bg="dark" aria-label="深色背景" aria-pressed="true" title="深色背景"></button></div><span class="separator"></span><button id="fullscreen" title="全屏 (F11)">全屏</button>
 </nav>
-<main id="viewport" tabindex="0" data-bg="dark" aria-label="SVG 图片画布">
+<main id="viewport" tabindex="0" data-bg="dark" aria-label="SVG / EPS 图片画布">
 <img id="picture" alt="" draggable="false">
-<div id="empty"><div class="empty-mark">SVG</div><h1>把矢量图片，轻松打开</h1><p>拖入一张 SVG 图片，或从文件夹中选择。<br>放大细节，顺手浏览同文件夹里的每一张。</p><button class="primary" id="openEmpty">选择 SVG 图片</button><div class="hint"><kbd>滚轮</kbd> 缩放 &nbsp; · &nbsp; <kbd>拖动</kbd> 平移 &nbsp; · &nbsp; <kbd>←</kbd> <kbd>→</kbd> 切换图片</div></div>
+<div id="loading" role="status" aria-live="polite"></div>
+<div id="empty"><div class="empty-mark">SVG</div><h1>把矢量图片，轻松打开</h1><p>拖入一张 SVG 或 EPS 图片，或从文件夹中选择。<br>放大细节，顺手浏览同文件夹里的每一张。</p><button class="primary" id="openEmpty">选择 SVG / EPS 图片</button><div class="hint"><kbd>滚轮</kbd> 缩放 &nbsp; · &nbsp; <kbd>拖动</kbd> 平移 &nbsp; · &nbsp; <kbd>←</kbd> <kbd>→</kbd> 切换图片</div></div>
 <button class="edge" id="previousEdge" title="上一张" aria-label="上一张" disabled>‹</button><button class="edge" id="nextEdge" title="下一张" aria-label="下一张" disabled>›</button>
 </main>
 <footer><span id="counter">尚未打开图片</span><span id="dimensions"></span><button id="reveal" style="font-size:11px;padding:2px 5px" disabled title="在资源管理器中选中当前图片">在文件夹中显示</button><span class="footer-tip">滚轮缩放 · 拖动平移 · ← → 切图 · 双击适应窗口</span></footer>
 <div id="toast" role="status" aria-live="polite"></div>
-<dialog id="helpDialog"><h2>顺手的 SVG 查看器</h2><dl><dt>打开文件</dt><dd><kbd>Ctrl</kbd> + <kbd>O</kbd> / 拖入文件</dd><dt>放大 / 缩小</dt><dd>鼠标滚轮 / <kbd>+</kbd> <kbd>−</kbd></dd><dt>移动图片</dt><dd>按住鼠标左键拖动</dd><dt>上一张 / 下一张</dt><dd><kbd>←</kbd> <kbd>→</kbd></dd><dt>适应窗口 / 原始大小</dt><dd><kbd>0</kbd> / <kbd>1</kbd></dd><dt>重新读取文件</dt><dd><kbd>R</kbd></dd><dt>全屏 / 退出全屏</dt><dd><kbd>F11</kbd> / <kbd>Esc</kbd></dd></dl><p>图片按文件名自然排序，例如 2.svg 在 10.svg 前。背景色可用右上角圆点切换。切换图片后自动适应窗口。</p><p>设为默认前，请把整个程序文件夹放在固定位置。点击下方按钮后，在 Windows 默认应用中搜索 .svg 并选择“SVG 查看器”。</p><div class="dialog-actions"><button class="secondary" id="associate">设为 SVG 默认应用</button><button class="primary" id="closeHelp">知道了</button></div></dialog>
+<dialog id="helpDialog"><h2>顺手的 SVG 查看器</h2><dl><dt>打开文件</dt><dd><kbd>Ctrl</kbd> + <kbd>O</kbd> / 拖入文件</dd><dt>放大 / 缩小</dt><dd>鼠标滚轮 / <kbd>+</kbd> <kbd>−</kbd></dd><dt>移动图片</dt><dd>按住鼠标左键拖动</dd><dt>上一张 / 下一张</dt><dd><kbd>←</kbd> <kbd>→</kbd></dd><dt>适应窗口 / 原始大小</dt><dd><kbd>0</kbd> / <kbd>1</kbd></dd><dt>重新读取文件</dt><dd><kbd>R</kbd></dd><dt>全屏 / 退出全屏</dt><dd><kbd>F11</kbd> / <kbd>Esc</kbd></dd></dl><p>图片按文件名自然排序，例如 2.svg 在 10.svg 前，SVG 和 EPS 可混合浏览。背景色可用右上角圆点切换。切换图片后自动适应窗口。</p><p>设为默认前，请把整个程序文件夹放在固定位置。点击下方按钮后，在 Windows 默认应用中搜索 .svg 或 .eps 并选择“SVG 查看器”。</p><div class="dialog-actions"><button class="secondary" id="associate">设置默认打开方式</button><button class="primary" id="closeHelp">知道了</button></div></dialog>
+<dialog id="ghostscriptDialog"><h2>EPS / Ghostscript 设置</h2><p>查看 EPS 需要在电脑上安装 Ghostscript。程序不捆绑 Ghostscript；查看 SVG 无需安装。</p><p id="gsStatus">Ghostscript：正在检测…</p><p>如已安装但未自动找到，请选择其 bin 文件夹中的 gswin64c.exe（或 gswin32c.exe）。EPS 以高分辨率预览显示，大幅放大时可能出现像素。</p><div class="dialog-actions"><button class="secondary" id="downloadGs">下载 Ghostscript</button><button class="secondary" id="chooseGs">选择 Ghostscript…</button><button class="primary" id="closeGs">关闭</button></div></dialog>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -57,15 +60,23 @@ function loadImage(message){
  const id=++loadId,candidate=new Image();
  candidate.onload=()=>{
   if(id!==loadId)return;
-  state.loaded=true;state.width=candidate.naturalWidth;state.height=candidate.naturalHeight;state.index=message.index;state.total=message.total;
+  clearTimeout(toastTimer);$('toast').style.display='none';
+  state.loaded=true;state.width=message.width??candidate.naturalWidth;state.height=message.height??candidate.naturalHeight;state.index=message.index;state.total=message.total;
   picture.src=candidate.src;picture.alt=message.name;picture.style.width=state.width+'px';picture.style.height=state.height+'px';
   viewport.classList.add('loaded');$('name').textContent=message.name;$('name').title=message.name;$('path').textContent=message.path;$('path').title=message.path;
-  $('counter').textContent=`${message.index} / ${message.total} 张`;$('dimensions').textContent=`${state.width} × ${state.height}`;buttons();fit();viewport.focus({preventScroll:true});
+  $('loading').style.display='none';$('counter').textContent=`${message.index} / ${message.total} 张`;$('dimensions').textContent=`${Math.round(state.width)} × ${Math.round(state.height)}${message.format==='EPS 预览'?' · EPS 预览':''}`;buttons();fit();viewport.focus({preventScroll:true});
  };
- candidate.onerror=()=>{if(id===loadId)notice('图片无法渲染。请检查 SVG 文件内容是否完整。',true)};
- candidate.src='data:image/svg+xml;base64,'+message.data;
+ candidate.onerror=()=>{if(id===loadId){$('loading').style.display='none';notice('图片无法渲染。请检查文件内容是否完整。',true)}};
+ candidate.src='data:'+(message.mime||'image/svg+xml')+';base64,'+message.data;
 }
-function receive(message){if(message.type==='image')loadImage(message);else if(message.type==='error'||message.type==='notice')notice(message.message,message.type==='error');else if(message.type==='fullscreen')$('fullscreen').textContent=message.value?'退出全屏':'全屏'}
+function receive(message){
+ if(message.type==='image')loadImage(message);
+ else if(message.type==='loading'){$('loading').textContent=message.message;$('loading').style.display='block'}
+ else if(message.type==='error'||message.type==='notice'){$('loading').style.display='none';notice(message.message,message.type==='error')}
+ else if(message.type==='needGhostscript'){$('loading').style.display='none';$('gsStatus').textContent=message.message;if($('helpDialog').open)$('helpDialog').close();if(!$('ghostscriptDialog').open)$('ghostscriptDialog').showModal()}
+ else if(message.type==='ghostscript'||message.type==='ghostscriptSelected'){$('gsStatus').textContent=message.message;if(message.type==='ghostscriptSelected'&&$('ghostscriptDialog').open)$('ghostscriptDialog').close()}
+ else if(message.type==='fullscreen')$('fullscreen').textContent=message.value?'退出全屏':'全屏';
+}
 window.chrome?.webview?.addEventListener('message',event=>receive(event.data));
 $('open').onclick=$('openEmpty').onclick=()=>send('open');
 for(const id of ['previous','previousEdge'])$(id).onclick=()=>send('previous');
@@ -73,6 +84,8 @@ for(const id of ['next','nextEdge'])$(id).onclick=()=>send('next');
 $('zoomIn').onclick=()=>zoomAt(1.2);$('zoomOut').onclick=()=>zoomAt(1/1.2);$('fit').onclick=fit;$('actual').onclick=actual;
 $('fullscreen').onclick=()=>send('fullscreen');$('reveal').onclick=()=>send('reveal');
 $('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('helpDialog').close();$('associate').onclick=()=>send('associate');
+const gsHelp=document.createElement('button');gsHelp.className='secondary';gsHelp.textContent='EPS 设置';gsHelp.id='ghostscriptHelp';$('associate').before(gsHelp);
+gsHelp.onclick=()=>{$('helpDialog').close();$('ghostscriptDialog').showModal()};$('chooseGs').onclick=()=>send('chooseGhostscript');$('downloadGs').onclick=()=>send('downloadGhostscript');$('closeGs').onclick=()=>$('ghostscriptDialog').close();
 function setBackground(value){viewport.dataset.bg=value;document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===value)));try{localStorage.setItem('background',value)}catch{}}
 document.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>setBackground(b.dataset.bg));
 try{const saved=localStorage.getItem('background');if(['checker','white','dark'].includes(saved))setBackground(saved)}catch{}
@@ -84,7 +97,7 @@ viewport.addEventListener('pointerup',endDrag);viewport.addEventListener('pointe
 viewport.addEventListener('dblclick',e=>{if(!e.target.closest('button'))fit()});
 new ResizeObserver(()=>{if(state.loaded){if(state.fit)fit();else center()}}).observe(viewport);
 document.addEventListener('keydown',e=>{
- if($('helpDialog').open)return;
+ if($('helpDialog').open||$('ghostscriptDialog').open)return;
  if(e.ctrlKey&&e.key.toLowerCase()==='o'){e.preventDefault();send('open');return}
  if(e.key==='F11'){e.preventDefault();send('fullscreen');return}if(e.key==='Escape'){send('exitFullscreen');return}
  if(e.ctrlKey||e.altKey||e.metaKey)return;
@@ -93,7 +106,7 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('dragover',e=>{e.preventDefault();viewport.classList.add('drop');if(e.dataTransfer)e.dataTransfer.dropEffect='copy'});
 document.addEventListener('dragleave',e=>{if(!e.relatedTarget)viewport.classList.remove('drop')});
-document.addEventListener('drop',e=>{e.preventDefault();viewport.classList.remove('drop');const files=Array.from(e.dataTransfer?.files||[]);const file=files.find(f=>/\.svg$/i.test(f.name));if(!file){notice('请拖入 .svg 图片文件。',true);return}if(window.chrome?.webview?.postMessageWithAdditionalObjects)window.chrome.webview.postMessageWithAdditionalObjects({action:'drop'},[file]);else notice('当前 WebView2 版本不支持拖入，请使用“打开图片”。',true)});
+document.addEventListener('drop',e=>{e.preventDefault();viewport.classList.remove('drop');const files=Array.from(e.dataTransfer?.files||[]);const file=files.find(f=>/\.(svg|eps)$/i.test(f.name));if(!file){notice('请拖入 .svg 或 .eps 图片文件。',true);return}if(window.chrome?.webview?.postMessageWithAdditionalObjects)window.chrome.webview.postMessageWithAdditionalObjects({action:'drop'},[file]);else notice('当前 WebView2 版本不支持拖入，请使用“打开图片”。',true)});
 send('ready');
 </script>
 </body></html>

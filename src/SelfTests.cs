@@ -85,6 +85,7 @@ internal sealed partial class ViewerForm
             await Task.Delay(100);
             Check(await Eval("state.fit && Math.abs(state.x-(viewport.clientWidth-state.width*state.scale)/2)<1"), "窗口调整后自动适应");
             Check(await Eval("document.querySelector('.tools').scrollWidth<=document.querySelector('.tools').clientWidth && document.documentElement.scrollWidth<=innerWidth"), "高 DPI 窄窗口工具栏完整显示");
+            await RunEpsTestsAsync(root, Check, Eval, WaitFor);
             await web.CoreWebView2.ExecuteScriptAsync("$('toast').style.display='none';setBackground('dark');");
             await Task.Delay(100);
             using (var screenshot = File.Create(Path.Combine(root, "viewer.png")))
